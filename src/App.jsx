@@ -4,21 +4,33 @@ import './styles/global.css';
 import './styles/components.css';
 
 import { Shell } from './components/layout/Shell';
-import { DashboardShellView } from './views/DashboardShellView';
 import { SuperAdminDashboardView } from './views/SuperAdminDashboardView';
+import { HospitalAdminDashboardView } from './views/HospitalAdminDashboardView';
 import { DesignSystemView } from './views/DesignSystemView';
-import { PatientsShellView } from './views/PatientsShellView';
-import { AppointmentsShellView } from './views/AppointmentsShellView';
-import { SettingsShellView } from './views/SettingsShellView';
 
 import { Modal } from './components/ui/Modal';
 import { Input, Select } from './components/ui/Input';
 import { Button } from './components/ui/Button';
 import { Alert } from './components/ui/Alert';
-import { CheckCircle2, Siren, Bell, ShieldCheck, HeartPulse } from 'lucide-react';
+import { CheckCircle2, Siren } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('super-admin');
+
+  // Default selected hospital for Hospital Admin portal
+  const [selectedHospital, setSelectedHospital] = useState({
+    id: 'HOSP-8921',
+    name: 'St. Jude Medical Center',
+    slug: 'stjude.medipulse.org',
+    city: 'New York, NY',
+    adminEmail: 'admin@stjude.org',
+    adminPassword: 'StJudeAdmin@8921',
+    plan: 'Enterprise',
+    beds: '450 Beds',
+    licenseKey: 'MP-8921-X9K2',
+    status: 'Active'
+  });
+
   const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
   const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -26,40 +38,20 @@ export default function App() {
   // Dynamic titles per view tab
   const pageMeta = {
     'super-admin': {
-      title: 'Super Admin - Multi-Tenant Hospital Management',
-      subtitle: 'Create, register, and provision dedicated hospital instances with auto-generated Unique IDs'
+      title: 'Super Admin - Hospitals & Multi-Tenant Management',
+      subtitle: 'Create new hospitals with auto-generated Unique IDs, setup hospital admin credentials, and monitor summary metrics'
     },
-    dashboard: {
-      title: 'Hospital Operations Dashboard',
-      subtitle: 'Real-time telemetry, emergency patient queue, and department activity'
-    },
-    patients: {
-      title: 'Patients Directory & Records',
-      subtitle: 'Comprehensive electronic health record database'
-    },
-    appointments: {
-      title: 'Outpatient Appointments Schedule',
-      subtitle: 'Manage daily physician consult slots and telehealth requests'
-    },
-    doctors: {
-      title: 'Physicians & Staff Roster',
-      subtitle: 'Attending doctors, duty shifts, and specialty units'
-    },
-    departments: {
-      title: 'Hospital Department Wings',
-      subtitle: 'ICU, Trauma Unit, Cardiology, Neurology, and Pediatrics overview'
+    'hospital-admin': {
+      title: `Hospital Admin Dashboard (${selectedHospital ? selectedHospital.name : 'Hospital Portal'})`,
+      subtitle: `Admin management portal for Unique Hospital ID: ${selectedHospital ? selectedHospital.id : 'HOSP-8921'}`
     },
     'design-system': {
       title: 'MediPulse Reusable UI Design System Kit',
       subtitle: 'Standardized UI design tokens, component matrix, typography, and interactive controls'
-    },
-    settings: {
-      title: 'System Preferences & Compliance',
-      subtitle: 'HIPAA privacy controls, facility defaults, and audit permissions'
     }
   };
 
-  const currentMeta = pageMeta[activeTab] || pageMeta.dashboard;
+  const currentMeta = pageMeta[activeTab] || pageMeta['super-admin'];
 
   return (
     <Shell
@@ -72,40 +64,30 @@ export default function App() {
       onOpenNotifications={() => setIsNotificationsOpen(true)}
     >
       {/* Active View Controller */}
-      {activeTab === 'super-admin' && <SuperAdminDashboardView />}
+      {activeTab === 'super-admin' && (
+        <SuperAdminDashboardView
+          onSelectHospitalAdminLogin={(hosp) => {
+            setSelectedHospital(hosp);
+            setActiveTab('hospital-admin');
+          }}
+        />
+      )}
 
-      {activeTab === 'dashboard' && (
-        <DashboardShellView
-          onNavigateToDesignSystem={() => setActiveTab('design-system')}
-          onOpenNewPatientModal={() => setIsNewPatientModalOpen(true)}
+      {activeTab === 'hospital-admin' && (
+        <HospitalAdminDashboardView
+          hospital={selectedHospital}
+          onLogoutToSuperAdmin={() => setActiveTab('super-admin')}
         />
       )}
 
       {activeTab === 'design-system' && <DesignSystemView />}
 
-      {activeTab === 'patients' && (
-        <PatientsShellView onOpenNewPatientModal={() => setIsNewPatientModalOpen(true)} />
-      )}
-
-      {activeTab === 'appointments' && <AppointmentsShellView />}
-
-      {(activeTab === 'doctors' || activeTab === 'departments') && (
-        <div className="flex flex-col gap-6">
-          <Alert variant="info" title={`${activeTab.toUpperCase()} Module Shell`}>
-            This structural shell view is styled with the MediPulse design system tokens and ready for custom feature data integration.
-          </Alert>
-          <DesignSystemView />
-        </div>
-      )}
-
-      {activeTab === 'settings' && <SettingsShellView />}
-
       {/* Global Quick Action: New Patient Modal */}
       <Modal
         isOpen={isNewPatientModalOpen}
         onClose={() => setIsNewPatientModalOpen(false)}
-        title="Quick Patient Registration Shell"
-        subtitle="Enter new patient intake details"
+        title="Quick Patient Registration"
+        subtitle="Enter patient intake details"
         footer={
           <>
             <Button variant="outline" onClick={() => setIsNewPatientModalOpen(false)}>
@@ -134,14 +116,6 @@ export default function App() {
               ]}
             />
           </div>
-          <Select
-            label="Initial Triage Priority"
-            options={[
-              { value: 'routine', label: 'Level 4 - Routine Consult' },
-              { value: 'urgent', label: 'Level 2 - Urgent Care' },
-              { value: 'emergency', label: 'Level 1 - Emergency Trauma' }
-            ]}
-          />
         </div>
       </Modal>
 
@@ -164,16 +138,8 @@ export default function App() {
       >
         <div className="flex flex-col gap-4">
           <Alert variant="danger" title="Level 1 Red Code Protocol">
-            Triggering this protocol will notify all on-duty trauma physicians and lock down elevator shaft B.
+            Triggering this protocol will notify all on-duty trauma physicians.
           </Alert>
-          <Select
-            label="Select Emergency Type"
-            options={[
-              { value: 'cardiac', label: 'Code Blue - Cardiac Arrest in ICU' },
-              { value: 'trauma', label: 'Code Red - Severe Multi-Trauma Intake' },
-              { value: 'stroke', label: 'Code Stroke - Acute Neurological Deficit' }
-            ]}
-          />
           <Input label="Emergency Room Bay" defaultValue="Resuscitation Bay 01" />
         </div>
       </Modal>
@@ -186,14 +152,11 @@ export default function App() {
         subtitle="Recent high-priority notifications"
       >
         <div className="flex flex-col gap-3">
-          <Alert variant="danger" title="ICU Bed Capacity Alert (10 mins ago)">
-            ICU Wing B reaching 90% occupancy limit. 2 beds remaining.
+          <Alert variant="success" title="New Hospital Registered (Just Now)">
+            Hospital instance created with Unique ID: HOSP-8921.
           </Alert>
-          <Alert variant="warning" title="Lab Results Ready (25 mins ago)">
-            Stat blood work returned for Patient #PAT-8095 (James Thorne).
-          </Alert>
-          <Alert variant="success" title="Telemetry Sync (1 hour ago)">
-            Cardiac monitors in Room 302-A resynced with central server.
+          <Alert variant="info" title="Telemetry Sync">
+            Central multi-tenant database active.
           </Alert>
         </div>
       </Modal>

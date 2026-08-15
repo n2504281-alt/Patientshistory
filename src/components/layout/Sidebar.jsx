@@ -21,14 +21,9 @@ export const Sidebar = ({
   onToggleCollapse
 }) => {
   const navItems = [
-    { id: 'super-admin', label: 'Super Admin (Hospitals)', icon: Building2, badge: 'NEW', highlight: true },
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'patients', label: 'Patients Directory', icon: Users, badge: '1,420' },
-    { id: 'appointments', label: 'Appointments', icon: Calendar, badge: '28' },
-    { id: 'doctors', label: 'Doctors & Staff', icon: Stethoscope },
-    { id: 'departments', label: 'Departments', icon: Building2 },
-    { id: 'design-system', label: 'Design System Kit', icon: Palette },
-    { id: 'settings', label: 'System Settings', icon: Settings }
+    { id: 'super-admin', label: 'Super Admin (Hospitals)', icon: Building2, highlight: true },
+    { id: 'hospital-admin', label: 'Hospital Admin Portal', icon: ShieldCheck },
+    { id: 'design-system', label: 'Design System Kit', icon: Palette }
   ];
 
   return (
