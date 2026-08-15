@@ -1,171 +1,225 @@
 /**
- * MediPulse HMS - Super Admin Dashboard Control Center
- * Manages Stat Cards, Hospitals Table, Row Click Details Modal, and Suspend/Activate Toggles
+ * MediCore OS - Super Admin Dashboard Control Center
  */
 
-// Initial Platform State
+// Initial Seed Hospitals Data matching reference design
 let hospitalsData = [
   {
-    hospital_id: 'HOSP-8921',
-    name: 'St. Jude Medical Center',
-    slug: 'stjude.medipulse.org',
-    city: 'New York, NY',
-    admin_name: 'Dr. Sarah Jenkins',
-    admin_email: 'admin@stjude.org',
-    admin_password: 'StJudeAdmin@8921',
-    doctor_count: 48,
-    patient_count: 1420,
-    join_date: '2026-01-10',
-    plan: 'Enterprise',
+    hospital_id: 'HOSP-1001',
+    name: 'Al-Shifa General Hospital',
+    slug: 'alshifa.medicore.os',
+    city: 'Lahore',
+    admin_name: 'Farhan Iqbal',
+    admin_email: 'farhan@alshifa.org',
+    admin_password: 'AlShifaPass@1001',
+    doctor_count: 34,
+    patient_count: 5210,
+    join_date: '2026-01-15',
     beds: '450 Beds',
     status: 'Active'
   },
   {
-    hospital_id: 'HOSP-4410',
-    name: 'City Care Trauma Institute',
-    slug: 'citycare.medipulse.org',
-    city: 'Chicago, IL',
-    admin_name: 'Dr. Marcus Brody',
-    admin_email: 'admin@citycare.org',
-    admin_password: 'CityCarePass@4410',
-    doctor_count: 32,
-    patient_count: 890,
+    hospital_id: 'HOSP-1002',
+    name: 'City Care Medical Complex',
+    slug: 'citycare.medicore.os',
+    city: 'Karachi',
+    admin_name: 'Sana Malik',
+    admin_email: 'sana@citycare.org',
+    admin_password: 'CityCarePass@1002',
+    doctor_count: 21,
+    patient_count: 3110,
     join_date: '2026-02-01',
-    plan: 'Premium',
-    beds: '280 Beds',
-    status: 'Active'
-  },
-  {
-    hospital_id: 'HOSP-3109',
-    name: 'Metro Pediatrics Hospital',
-    slug: 'metroped.medipulse.org',
-    city: 'Los Angeles, CA',
-    admin_name: 'Dr. Elena Rostova',
-    admin_email: 'admin@metroped.org',
-    admin_password: 'MetroPass@3109',
-    doctor_count: 26,
-    patient_count: 610,
-    join_date: '2026-02-12',
-    plan: 'Enterprise',
     beds: '320 Beds',
     status: 'Active'
   },
   {
-    hospital_id: 'HOSP-7023',
-    name: 'Apex Heart Clinic',
-    slug: 'apexheart.medipulse.org',
-    city: 'Houston, TX',
-    admin_name: 'Dr. Arthur Pendelton',
-    admin_email: 'admin@apexheart.org',
-    admin_password: 'ApexPass@7023',
-    doctor_count: 18,
-    patient_count: 340,
-    join_date: '2026-08-05',
-    plan: 'Standard',
-    beds: '120 Beds',
+    hospital_id: 'HOSP-1003',
+    name: 'Green Valley Hospital',
+    slug: 'greenvalley.medicore.os',
+    city: 'Islamabad',
+    admin_name: 'Bilal Ahmed',
+    admin_email: 'bilal@greenvalley.org',
+    admin_password: 'GreenValley@1003',
+    doctor_count: 9,
+    patient_count: 940,
+    join_date: '2026-08-10',
+    beds: '150 Beds',
+    status: 'Trial'
+  },
+  {
+    hospital_id: 'HOSP-1004',
+    name: 'Al-Noor Clinic Network',
+    slug: 'alnoor.medicore.os',
+    city: 'Faisalabad',
+    admin_name: 'Ayesha Raza',
+    admin_email: 'ayesha@alnoor.org',
+    admin_password: 'AlNoorPass@1004',
+    doctor_count: 6,
+    patient_count: 480,
+    join_date: '2026-03-20',
+    beds: '80 Beds',
     status: 'Suspended'
+  },
+  {
+    hospital_id: 'HOSP-1005',
+    name: "Sunrise Children's Hospital",
+    slug: 'sunrise.medicore.os',
+    city: 'Multan',
+    admin_name: 'Usman Tariq',
+    admin_email: 'usman@sunrise.org',
+    admin_password: 'SunrisePass@1005',
+    doctor_count: 14,
+    patient_count: 2075,
+    join_date: '2026-04-05',
+    beds: '200 Beds',
+    status: 'Active'
+  },
+  {
+    hospital_id: 'HOSP-1006',
+    name: 'Metro Care Hospital',
+    slug: 'metrocare.medicore.os',
+    city: 'Rawalpindi',
+    admin_name: 'Dr. Tariq Shah',
+    admin_email: 'tariq@metrocare.org',
+    admin_password: 'MetroPass@1006',
+    doctor_count: 10,
+    patient_count: 1200,
+    join_date: '2026-05-12',
+    beds: '180 Beds',
+    status: 'Active'
+  },
+  {
+    hospital_id: 'HOSP-1007',
+    name: 'Apex Heart Institute',
+    slug: 'apexheart.medicore.os',
+    city: 'Peshawar',
+    admin_name: 'Dr. Zaid Khan',
+    admin_email: 'zaid@apexheart.org',
+    admin_password: 'ApexPass@1007',
+    doctor_count: 6,
+    patient_count: 435,
+    join_date: '2026-08-02',
+    beds: '100 Beds',
+    status: 'Active'
   }
 ];
 
-// Helper Generators
+let currentFilterStatus = 'All';
+let currentSearchQuery = '';
+
+// Unique ID Generator
 function generateUniqueHospitalId() {
   return `HOSP-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
-function generateAdminPassword(id) {
-  return `HospAdmin@${id.replace('HOSP-', '')}`;
-}
-
-// Render Platform Stat Cards: Total Hospitals, Total Doctors, Total Patients, New Hospitals This Month
+// Render Header Platform Stat Cards
 function renderStatCards() {
   const totalHospitalsElem = document.getElementById('stat-total-hospitals');
+  const activeSubtextElem = document.getElementById('stat-active-subtext');
   const totalDoctorsElem = document.getElementById('stat-total-doctors');
   const totalPatientsElem = document.getElementById('stat-total-patients');
   const newHospitalsElem = document.getElementById('stat-new-hospitals');
 
-  const totalHospitals = hospitalsData.length;
+  const totalCount = hospitalsData.length;
+  const activeCount = hospitalsData.filter(h => h.status === 'Active').length;
   const totalDoctors = hospitalsData.reduce((sum, h) => sum + (parseInt(h.doctor_count) || 0), 0);
   const totalPatients = hospitalsData.reduce((sum, h) => sum + (parseInt(h.patient_count) || 0), 0);
   
-  // Calculate new hospitals created in current month (August 2026)
-  const newThisMonth = hospitalsData.filter(h => h.join_date && h.join_date.startsWith('2026-08')).length;
+  // Joined in current month (August 2026)
+  const newThisMonth = hospitalsData.filter(h => h.join_date && h.join_date.includes('2026-08')).length;
 
-  if (totalHospitalsElem) totalHospitalsElem.textContent = totalHospitals;
+  if (totalHospitalsElem) totalHospitalsElem.textContent = totalCount;
+  if (activeSubtextElem) activeSubtextElem.textContent = `${activeCount} active now`;
   if (totalDoctorsElem) totalDoctorsElem.textContent = totalDoctors.toLocaleString();
   if (totalPatientsElem) totalPatientsElem.textContent = totalPatients.toLocaleString();
   if (newHospitalsElem) newHospitalsElem.textContent = newThisMonth;
 }
 
-// Render Searchable Hospitals Table
-function renderHospitalsTable(filterQuery = '') {
+// Render Filtered Hospitals Table
+function renderHospitalsTable() {
   const tbody = document.getElementById('hospitals-table-body');
   if (!tbody) return;
 
-  const filtered = hospitalsData.filter(h =>
-    h.name.toLowerCase().includes(filterQuery.toLowerCase()) ||
-    h.city.toLowerCase().includes(filterQuery.toLowerCase()) ||
-    h.admin_name.toLowerCase().includes(filterQuery.toLowerCase()) ||
-    h.hospital_id.toLowerCase().includes(filterQuery.toLowerCase())
-  );
+  const filtered = hospitalsData.filter(h => {
+    // Status Filter Tab
+    const matchesStatus = (currentFilterStatus === 'All') || (h.status === currentFilterStatus);
+    
+    // Live Search Input
+    const query = currentSearchQuery.toLowerCase().trim();
+    const matchesSearch = !query || 
+      h.name.toLowerCase().includes(query) ||
+      h.city.toLowerCase().includes(query) ||
+      h.admin_name.toLowerCase().includes(query) ||
+      h.hospital_id.toLowerCase().includes(query);
+
+    return matchesStatus && matchesSearch;
+  });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--slate-500); padding: 2rem;">No hospitals match "${filterQuery}".</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 2.5rem;">No hospitals found matching criteria.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = filtered.map(h => {
-    const isActive = h.status === 'Active';
+    let statusClass = 'active';
+    if (h.status === 'Trial') statusClass = 'trial';
+    if (h.status === 'Suspended') statusClass = 'suspended';
+
     return `
-      <tr style="cursor: pointer;" onclick="openHospitalDetailsModal('${h.hospital_id}', event)">
+      <tr onclick="openHospitalDetailsModal('${h.hospital_id}', event)">
         <td>
-          <div style="font-weight: 700; color: var(--slate-900); font-size: 0.95rem;">${h.name}</div>
-          <div style="font-size: 0.75rem; color: var(--slate-500); font-family: monospace;">${h.hospital_id} • ${h.slug}</div>
-        </td>
-        <td><span style="color: var(--slate-700); font-weight: 500;">${h.city}</span></td>
-        <td>
-          <div style="font-weight: 600; color: var(--slate-800);">${h.admin_name}</div>
-          <div style="font-size: 0.75rem; color: var(--slate-500);">${h.admin_email}</div>
+          <div class="hospital-name-bold">${h.name}</div>
+          <div class="hospital-city-sub">${h.city}</div>
         </td>
         <td>
-          <span class="badge-status ${isActive ? 'active' : 'suspended'}">
-            ${isActive ? '🟢 Active' : '🔴 Suspended'}
+          <div class="admin-name-text">${h.admin_name}</div>
+        </td>
+        <td>
+          <div class="count-number-cell">${h.doctor_count}</div>
+        </td>
+        <td>
+          <div class="count-number-cell">${(h.patient_count || 0).toLocaleString()}</div>
+        </td>
+        <td>
+          <span class="status-pill ${statusClass}">
+            ${h.status}
           </span>
-        </td>
-        <td onclick="event.stopPropagation()">
-          <button 
-            class="btn ${isActive ? 'btn-danger' : 'btn-primary'}" 
-            style="padding: 0.35rem 0.75rem; font-size: 0.78rem;" 
-            onclick="toggleHospitalStatus('${h.hospital_id}', event)"
-          >
-            ${isActive ? 'Suspend' : 'Activate'}
-          </button>
-          <button 
-            class="btn btn-secondary" 
-            style="padding: 0.35rem 0.65rem; font-size: 0.78rem; margin-left: 0.25rem;"
-            onclick="loginAsHospitalAdmin('${h.hospital_id}')"
-          >
-            Login Portal
-          </button>
         </td>
       </tr>
     `;
   }).join('');
 }
 
-// Toggle Suspend / Activate Status
+// Tab Filter Change Handler
+function filterByStatus(status, btnElement) {
+  currentFilterStatus = status;
+
+  if (btnElement) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+  }
+
+  renderHospitalsTable();
+}
+
+// Suspend or Reactivate Hospital Status
 async function toggleHospitalStatus(hospitalId, event) {
   if (event) event.stopPropagation();
 
   const hospital = hospitalsData.find(h => h.hospital_id === hospitalId);
   if (!hospital) return;
 
-  const newStatus = hospital.status === 'Active' ? 'Suspended' : 'Active';
+  const newStatus = hospital.status === 'Suspended' ? 'Active' : 'Suspended';
   hospital.status = newStatus;
 
   renderStatCards();
-  renderHospitalsTable(document.getElementById('search-hospitals')?.value || '');
+  renderHospitalsTable();
 
-  // Notify backend API
+  if (document.getElementById('modal-hospital-details').classList.contains('open')) {
+    openHospitalDetailsModal(hospitalId);
+  }
+
+  // Update backend API
   try {
     await fetch('api/hospitals.php', {
       method: 'PUT',
@@ -173,11 +227,11 @@ async function toggleHospitalStatus(hospitalId, event) {
       body: JSON.stringify({ hospital_id: hospitalId, status: newStatus })
     });
   } catch (err) {
-    console.log('Local status updated.');
+    console.log('Status updated locally.');
   }
 }
 
-// Open Clickable Row Hospital Details Modal (showing doctor count, patient count, join date)
+// Open Clicked Row Hospital Details Modal
 function openHospitalDetailsModal(hospitalId, event) {
   if (event) event.stopPropagation();
 
@@ -190,14 +244,37 @@ function openHospitalDetailsModal(hospitalId, event) {
   document.getElementById('detail-hosp-city').textContent = hospital.city;
   document.getElementById('detail-hosp-admin').textContent = hospital.admin_name;
   document.getElementById('detail-hosp-email').textContent = hospital.admin_email;
-  document.getElementById('detail-hosp-doctors').textContent = hospital.doctor_count || 24;
-  document.getElementById('detail-hosp-patients').textContent = (hospital.patient_count || 450).toLocaleString();
+  document.getElementById('detail-hosp-doctors').textContent = hospital.doctor_count;
+  document.getElementById('detail-hosp-patients').textContent = (hospital.patient_count || 0).toLocaleString();
   document.getElementById('detail-hosp-joindate').textContent = hospital.join_date || '2026-01-15';
   
   const statusBadge = document.getElementById('detail-hosp-status');
   if (statusBadge) {
     statusBadge.textContent = hospital.status;
-    statusBadge.className = `badge-status ${hospital.status === 'Active' ? 'active' : 'suspended'}`;
+    let statusClass = 'active';
+    if (hospital.status === 'Trial') statusClass = 'trial';
+    if (hospital.status === 'Suspended') statusClass = 'suspended';
+    statusBadge.className = `status-pill ${statusClass}`;
+  }
+
+  const actionsDiv = document.getElementById('modal-detail-actions');
+  if (actionsDiv) {
+    const isSuspended = hospital.status === 'Suspended';
+    actionsDiv.innerHTML = `
+      <button 
+        class="${isSuspended ? 'btn-btn-success' : 'btn-btn-danger'}" 
+        onclick="toggleHospitalStatus('${hospital.hospital_id}', event)"
+      >
+        ${isSuspended ? 'Activate Hospital' : 'Suspend Hospital'}
+      </button>
+      <button 
+        class="btn-btn-outline" 
+        style="margin-left: 0.5rem;"
+        onclick="closeHospitalDetailsModal(); loginAsHospitalAdmin('${hospital.hospital_id}');"
+      >
+        Login Portal
+      </button>
+    `;
   }
 
   document.getElementById('modal-hospital-details').classList.add('open');
@@ -207,11 +284,10 @@ function closeHospitalDetailsModal() {
   document.getElementById('modal-hospital-details').classList.remove('open');
 }
 
-// Add New Hospital Modal Handlers
+// Add New Hospital Modal Functions
 function openAddHospitalModal() {
   const newId = generateUniqueHospitalId();
   document.getElementById('input-unique-id').value = newId;
-  document.getElementById('input-admin-password').value = generateAdminPassword(newId);
   document.getElementById('modal-add-hospital').classList.add('open');
 }
 
@@ -222,37 +298,37 @@ function closeAddHospitalModal() {
 function regenerateModalId() {
   const newId = generateUniqueHospitalId();
   document.getElementById('input-unique-id').value = newId;
-  document.getElementById('input-admin-password').value = generateAdminPassword(newId);
 }
 
-// Handle Add Hospital Form Submission
+// Form Submission Handler
 async function handleCreateHospitalSubmit(event) {
   event.preventDefault();
+  
   const name = document.getElementById('input-hospital-name').value;
   const uniqueId = document.getElementById('input-unique-id').value;
-  const city = document.getElementById('input-city').value || 'Central Region';
-  const adminName = document.getElementById('input-admin-name').value || 'Dr. Hospital Director';
-  const email = document.getElementById('input-admin-email').value || `admin@${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.org`;
-  const password = document.getElementById('input-admin-password').value;
-  const doctors = document.getElementById('input-doctors').value || 20;
-  const patients = document.getElementById('input-patients').value || 150;
+  const city = document.getElementById('input-city').value;
+  const adminName = document.getElementById('input-admin-name').value;
+  const doctors = parseInt(document.getElementById('input-doctors').value) || 20;
+  const patients = parseInt(document.getElementById('input-patients').value) || 1000;
+  const status = document.getElementById('input-status-plan').value || 'Active';
 
+  const cleanSlug = name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.medicore.os';
+  const cleanEmail = `admin@${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.org`;
   const todayStr = new Date().toISOString().split('T')[0];
 
   const newHospital = {
     hospital_id: uniqueId,
     name: name,
-    slug: `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}.medipulse.org`,
+    slug: cleanSlug,
     city: city,
     admin_name: adminName,
-    admin_email: email,
-    admin_password: password,
-    doctor_count: parseInt(doctors),
-    patient_count: parseInt(patients),
+    admin_email: cleanEmail,
+    admin_password: `Pass@${uniqueId.replace('HOSP-', '')}`,
+    doctor_count: doctors,
+    patient_count: patients,
     join_date: todayStr,
-    plan: 'Enterprise',
-    beds: '200 Beds',
-    status: 'Active'
+    beds: '250 Beds',
+    status: status
   };
 
   hospitalsData.unshift(newHospital);
@@ -262,7 +338,7 @@ async function handleCreateHospitalSubmit(event) {
 
   document.getElementById('form-add-hospital').reset();
 
-  // POST to PHP REST API
+  // API Call
   try {
     await fetch('api/hospitals.php', {
       method: 'POST',
@@ -270,19 +346,17 @@ async function handleCreateHospitalSubmit(event) {
       body: JSON.stringify(newHospital)
     });
   } catch (err) {
-    console.log('Hospital added locally.');
+    console.log('Added hospital locally.');
   }
-
-  alert(`Hospital "${name}" successfully created with Unique ID: ${uniqueId}!`);
 }
 
-// Login Portal Handler (Enforces Suspend Protection)
+// Hospital Admin Switching Portal
 function loginAsHospitalAdmin(hospitalId) {
   const hospital = hospitalsData.find(h => h.hospital_id === hospitalId);
   if (!hospital) return;
 
   if (hospital.status === 'Suspended') {
-    alert(`⛔ ACCESS DENIED: Hospital "${hospital.name}" (${hospital.hospital_id}) is SUSPENDED. Users cannot log in until reactivated by Super Admin.`);
+    alert(`⛔ ACCESS DENIED: "${hospital.name}" is SUSPENDED. Reactivate hospital to access portal.`);
     return;
   }
 
@@ -296,15 +370,17 @@ function loginAsHospitalAdmin(hospitalId) {
   document.getElementById('admin-hosp-admin').textContent = hospital.admin_name;
   document.getElementById('admin-hosp-email').textContent = hospital.admin_email;
   document.getElementById('admin-hosp-password').textContent = hospital.admin_password;
-  document.getElementById('admin-hosp-beds').textContent = hospital.beds || '200 Beds';
+  document.getElementById('admin-hosp-patients-val').textContent = (hospital.patient_count || 0).toLocaleString();
+  document.getElementById('admin-hosp-doctors-val').textContent = hospital.doctor_count;
+  document.getElementById('admin-hosp-status-val').textContent = hospital.status;
 }
 
-function logoutToSuperAdmin() {
+function showDashboardView() {
   document.getElementById('view-hospital-admin').style.display = 'none';
   document.getElementById('view-super-admin').style.display = 'block';
 }
 
-// Fetch Initial Data from PHP API
+// Fetch Initial Data from PHP API Backend
 async function fetchHospitalsFromAPI() {
   try {
     const response = await fetch('api/hospitals.php');
@@ -317,18 +393,21 @@ async function fetchHospitalsFromAPI() {
       }
     }
   } catch (err) {
-    console.log('Running with local platform state.');
+    console.log('Running with MediCore OS local state.');
   }
 }
 
-// On DOM Ready
+// Initialization
 document.addEventListener('DOMContentLoaded', () => {
   renderStatCards();
   renderHospitalsTable();
 
   const searchInput = document.getElementById('search-hospitals');
   if (searchInput) {
-    searchInput.addEventListener('input', (e) => renderHospitalsTable(e.target.value));
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value;
+      renderHospitalsTable();
+    });
   }
 
   fetchHospitalsFromAPI();

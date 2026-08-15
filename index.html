@@ -3,172 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediPulse HMS - Super Admin Control Center</title>
+  <title>MediCore OS - Super Admin Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <div class="app-container">
-  <!-- Sidebar Navigation -->
+  <!-- MediCore OS Sidebar -->
   <aside class="sidebar">
-    <div class="brand-header">
-      <div class="brand-icon">✚</div>
-      <div>
-        <div class="brand-title">MediPulse</div>
-        <div style="font-size: 0.7rem; color: var(--primary-500); font-weight: 700; text-transform: uppercase;">Super Admin Platform</div>
+    <div>
+      <div class="brand-header">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+          </svg>
+        </div>
+        <div class="brand-title">MediCore OS</div>
       </div>
+
+      <div class="nav-section-title">PLATFORM</div>
+      
+      <ul class="nav-list">
+        <li>
+          <a href="#" class="nav-item active" onclick="showDashboardView(); return false;">
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="filterByStatus('All'); return false;">
+            <span>Hospitals</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="alert('Subscriptions module active'); return false;">
+            <span>Subscriptions</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="alert('Analytics module active'); return false;">
+            <span>Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="alert('Support tickets module active'); return false;">
+            <span>Support</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="alert('Audit logs active'); return false;">
+            <span>Audit Log</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-item" onclick="alert('System settings active'); return false;">
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
     </div>
 
-    <ul class="nav-list">
-      <li>
-        <a href="#" class="nav-item active" onclick="logoutToSuperAdmin(); return false;">
-          <span>🏥 Super Admin Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a href="#" class="nav-item" onclick="loginAsHospitalAdmin('HOSP-8921'); return false;">
-          <span>👨‍⚕️ Hospital Admin Portal</span>
-        </a>
-      </li>
-    </ul>
+    <!-- Sidebar Bottom User Profile -->
+    <div class="sidebar-user">
+      <div class="user-avatar-circle">SA</div>
+      <div>
+        <div class="user-name">Super Admin</div>
+        <div class="user-email">owner@medicore.os</div>
+      </div>
+    </div>
   </aside>
 
-  <!-- Main Viewport Wrapper -->
+  <!-- Main Wrapper -->
   <div class="main-wrapper">
     <!-- Topbar Header -->
     <header class="topbar">
-      <input type="text" id="search-hospitals" class="search-input" placeholder="🔍 Search hospitals by name, city, admin, or Unique ID...">
-      
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <span style="background-color: var(--success-50); color: var(--success-600); padding: 0.35rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700;">
-          🟢 Control Center Active
-        </span>
-        <button class="btn btn-primary" onclick="openAddHospitalModal()">+ Add New Hospital</button>
+      <div class="search-input-wrapper">
+        <input type="text" id="search-hospitals" class="search-input" placeholder="Search hospitals, cities, admins...">
+      </div>
+
+      <div class="topbar-right">
+        <div class="header-user-badge">SA</div>
       </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Content Viewport -->
     <main class="content-viewport">
 
-      <!-- VIEW 1: SUPER ADMIN CONTROL CENTER -->
+      <!-- VIEW 1: SUPER ADMIN DASHBOARD -->
       <div id="view-super-admin">
-        <div class="page-header">
-          <h1 class="page-title">Super Admin Control Center</h1>
-          <p class="page-subtitle">Platform overview, system-wide metrics, tenant hospitals registry, and status control.</p>
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">Platform Overview</h1>
+            <p class="page-subtitle" id="formatted-date-subtitle">Saturday, August 15, 2026 — all hospitals, at a glance</p>
+          </div>
+          <button class="btn-add-hospital" onclick="openAddHospitalModal()">+ Add new hospital</button>
         </div>
 
-        <!-- Top Section: 4 Stat Cards -->
-        <div class="grid-4">
+        <!-- Stat Cards Grid (4 cards) -->
+        <div class="stat-cards-grid">
           <div class="stat-card">
-            <div class="stat-label">Total Hospitals</div>
-            <div class="stat-value" id="stat-total-hospitals">4</div>
-            <div class="stat-trend">Platform Registered</div>
+            <div class="stat-card-label">Total Hospitals</div>
+            <div class="stat-card-value" id="stat-total-hospitals">7</div>
+            <div class="stat-card-subtext" id="stat-active-subtext">5 active now</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Total Doctors (System-wide)</div>
-            <div class="stat-value" id="stat-total-doctors">124</div>
-            <div class="stat-trend">Attending Physicians</div>
+            <div class="stat-card-label">Total Doctors</div>
+            <div class="stat-card-value" id="stat-total-doctors">100</div>
+            <div class="stat-card-subtext">Across all hospitals</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Total Patients (System-wide)</div>
-            <div class="stat-value" id="stat-total-patients">3,260</div>
-            <div class="stat-trend">Active Health Records</div>
+            <div class="stat-card-label">Total Patients</div>
+            <div class="stat-card-value" id="stat-total-patients">13,450</div>
+            <div class="stat-card-subtext">System-wide records</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">New Hospitals This Month</div>
-            <div class="stat-value" id="stat-new-hospitals">1</div>
-            <div class="stat-trend">August 2026</div>
+            <div class="stat-card-label">New This Month</div>
+            <div class="stat-card-value" id="stat-new-hospitals">2</div>
+            <div class="stat-card-subtext">Hospitals joined in August</div>
           </div>
         </div>
 
-        <!-- Searchable Hospitals Table Card -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h2 class="card-title">Registered Hospitals Directory</h2>
-              <p style="font-size: 0.8125rem; color: var(--slate-500); margin-top: 0.15rem;">Click any hospital row to inspect detailed metrics, doctors count, and join date.</p>
+        <!-- Main Dashboard Split Grid -->
+        <div class="main-dashboard-grid">
+          
+          <!-- Left Column: Hospitals Table Card -->
+          <div class="dashboard-card">
+            <div class="dashboard-card-header">
+              <h2 class="card-title-serif">Hospitals</h2>
+              <div class="filter-tabs">
+                <button class="tab-btn active" onclick="filterByStatus('All', this)">All</button>
+                <button class="tab-btn" onclick="filterByStatus('Active', this)">Active</button>
+                <button class="tab-btn" onclick="filterByStatus('Trial', this)">Trial</button>
+                <button class="tab-btn" onclick="filterByStatus('Suspended', this)">Suspended</button>
+              </div>
             </div>
-            <button class="btn btn-primary" onclick="openAddHospitalModal()">+ Add New Hospital</button>
+
+            <div class="table-responsive">
+              <table class="hospitals-table">
+                <thead>
+                  <tr>
+                    <th>HOSPITAL</th>
+                    <th>ADMIN</th>
+                    <th>DOCS</th>
+                    <th>PATIENTS</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="hospitals-table-body">
+                  <!-- Dynamically rendered by js/super-admin.js -->
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Hospital Name & Unique ID</th>
-                  <th>City / Location</th>
-                  <th>Admin Name & Email</th>
-                  <th>Status (Active / Suspended)</th>
-                  <th style="width: 220px;">Actions & Access</th>
-                </tr>
-              </thead>
-              <tbody id="hospitals-table-body">
-                <!-- Dynamically Rendered by js/super-admin.js -->
-              </tbody>
-            </table>
+          <!-- Right Column: Growth Chart & Recent Activity -->
+          <div class="right-stack">
+            
+            <!-- Card 1: Hospital Growth Bar Chart -->
+            <div class="dashboard-card">
+              <div class="dashboard-card-header" style="padding-bottom: 0;">
+                <h3 class="card-title-serif" style="font-size: 1.25rem;">Hospital growth</h3>
+              </div>
+              <div class="chart-container">
+                <div class="chart-subtitle">New hospitals onboarded per month</div>
+                
+                <div class="bar-chart-flex">
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 40%;"></div>
+                    <span class="bar-label">Mar</span>
+                  </div>
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 30%;"></div>
+                    <span class="bar-label">Apr</span>
+                  </div>
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 60%;"></div>
+                    <span class="bar-label">May</span>
+                  </div>
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 50%;"></div>
+                    <span class="bar-label">Jun</span>
+                  </div>
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 80%;"></div>
+                    <span class="bar-label">Jul</span>
+                  </div>
+                  <div class="chart-bar-column">
+                    <div class="bar-fill" style="height: 70%;"></div>
+                    <span class="bar-label">Aug</span>
+                  </div>
+                </div>
+
+                <div class="chart-y-axis-labels">
+                  <span>0</span>
+                  <span>2</span>
+                  <span>4</span>
+                  <span>6</span>
+                  <span>8</span>
+                  <span>10</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Recent Activity Timeline -->
+            <div class="dashboard-card">
+              <div class="dashboard-card-header" style="padding-bottom: 0.5rem;">
+                <h3 class="card-title-serif" style="font-size: 1.25rem;">Recent activity</h3>
+              </div>
+              
+              <div class="activity-feed" id="activity-feed-list">
+                <div class="activity-item">
+                  <div class="activity-dot blue"></div>
+                  <div>
+                    <div class="activity-text">Green Valley Hospital started a Trial</div>
+                    <div class="activity-time">2h ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot red"></div>
+                  <div>
+                    <div class="activity-text">Al-Noor Clinic Network was suspended</div>
+                    <div class="activity-time">6h ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot green"></div>
+                  <div>
+                    <div class="activity-text">City Care upgraded to Premium</div>
+                    <div class="activity-time">1d ago</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
+
         </div>
       </div>
 
-      <!-- VIEW 2: HOSPITAL ADMIN DASHBOARD (Logged-In Portal) -->
+      <!-- VIEW 2: HOSPITAL ADMIN PORTAL SWITCH -->
       <div id="view-hospital-admin" style="display: none;">
-        <div style="background: linear-gradient(135deg, var(--slate-900), var(--slate-800)); color: #fff; padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+        <div style="background-color: var(--primary-teal); color: #fff; padding: 1.75rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
           <div>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <h1 id="admin-hosp-name" style="color: #fff; font-size: 1.5rem;">St. Jude Medical Center</h1>
-              <span id="admin-hosp-id" class="badge-id" style="background: rgba(13, 148, 136, 0.3); color: var(--primary-300); border-color: var(--primary-500);">HOSP-8921</span>
+              <h1 id="admin-hosp-name" style="color: #fff; font-family: var(--font-serif); font-size: 1.8rem; font-weight: 400;">St. Jude Medical Center</h1>
+              <span id="admin-hosp-id" style="background: rgba(255, 255, 255, 0.15); color: #fff; padding: 0.25rem 0.6rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-family: monospace;">HOSP-8921</span>
             </div>
-            <p style="color: var(--slate-400); font-size: 0.875rem; margin-top: 0.25rem;">
-              Subdomain: <strong id="admin-hosp-slug" style="color: var(--cyan-500);">stjude.medipulse.org</strong> • City: <span id="admin-hosp-city">New York, NY</span>
+            <p style="color: #a7f3d0; font-size: 0.875rem; margin-top: 0.35rem;">
+              Subdomain: <strong id="admin-hosp-slug">stjude.medipulse.org</strong> • City: <span id="admin-hosp-city">Lahore</span>
             </p>
           </div>
-          <button class="btn btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.3);" onclick="logoutToSuperAdmin()">
-            ← Switch to Super Admin
+          <button class="btn-btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.3);" onclick="showDashboardView()">
+            ← Back to Super Admin
           </button>
         </div>
 
-        <div class="grid-4">
+        <div class="stat-cards-grid">
           <div class="stat-card">
-            <div class="stat-label">Admitted Patients</div>
-            <div class="stat-value">1,420</div>
-            <div class="stat-trend">+8.5%</div>
+            <div class="stat-card-label">Admitted Patients</div>
+            <div class="stat-card-value" id="admin-hosp-patients-val">5,210</div>
+            <div class="stat-card-subtext">Active Medical Records</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Attending Doctors</div>
-            <div class="stat-value">48</div>
-            <div class="stat-trend">On Duty</div>
+            <div class="stat-card-label">Attending Doctors</div>
+            <div class="stat-card-value" id="admin-hosp-doctors-val">34</div>
+            <div class="stat-card-subtext">On Active Shift</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Bed Capacity</div>
-            <div class="stat-value" id="admin-hosp-beds">450 Beds</div>
-            <div class="stat-trend">85% Occupied</div>
+            <div class="stat-card-label">Bed Capacity</div>
+            <div class="stat-card-value" id="admin-hosp-beds">450 Beds</div>
+            <div class="stat-card-subtext">85% Occupied</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Emergency Intake</div>
-            <div class="stat-value">12 Active</div>
-            <div class="stat-trend">Level 1 Red</div>
+            <div class="stat-card-label">Hospital Status</div>
+            <div class="stat-card-value" id="admin-hosp-status-val" style="font-size: 1.4rem; color: var(--primary-mint);">Active</div>
+            <div class="stat-card-subtext">Platform Provisioned</div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Hospital Administrator Access Details</h3>
-          </div>
-          <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
-            <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Assigned Admin Name</div>
-              <div id="admin-hosp-admin" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem;">Dr. Sarah Jenkins</div>
+        <div class="dashboard-card" style="padding: 1.5rem;">
+          <h3 class="card-title-serif" style="margin-bottom: 1rem; font-size: 1.25rem;">Administrator Credentials & Access</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+            <div style="padding: 1rem; background: #f7faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Administrator Name</div>
+              <div id="admin-hosp-admin" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.25rem;">Farhan Iqbal</div>
             </div>
-            <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Admin Email Login</div>
-              <div id="admin-hosp-email" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem;">admin@stjude.org</div>
+            <div style="padding: 1rem; background: #f7faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Login Email</div>
+              <div id="admin-hosp-email" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.25rem;">farhan@alshifa.org</div>
             </div>
-            <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Access Password</div>
-              <div id="admin-hosp-password" style="font-family: monospace; font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem; color: var(--warning-600);">StJudeAdmin@8921</div>
+            <div style="padding: 1rem; background: #f7faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Access Password</div>
+              <div id="admin-hosp-password" style="font-family: monospace; font-weight: 700; font-size: 0.95rem; margin-top: 0.25rem; color: #b45309;">AlShifaPass@1001</div>
             </div>
           </div>
         </div>
@@ -178,131 +306,126 @@
   </div>
 </div>
 
-<!-- MODAL 1: Hospital Details (Opened on Row Click) -->
+<!-- MODAL 1: Hospital Detail & Actions Modal -->
 <div class="modal-overlay" id="modal-hospital-details">
-  <div class="modal-content">
+  <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 class="card-title" id="detail-hosp-name">St. Jude Medical Center</h3>
-        <p style="font-size: 0.8125rem; color: var(--slate-500);" id="detail-hosp-slug">stjude.medipulse.org</p>
+        <h3 class="card-title-serif" id="detail-hosp-name" style="font-size: 1.35rem;">Al-Shifa General Hospital</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted);" id="detail-hosp-slug">alshifa.medicore.os</p>
       </div>
-      <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;" onclick="closeHospitalDetailsModal()">✕</button>
+      <button class="btn-btn-outline" style="padding: 0.25rem 0.6rem; border: none; font-size: 1rem;" onclick="closeHospitalDetailsModal()">✕</button>
     </div>
 
     <div class="modal-body">
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: var(--primary-50); border-radius: var(--radius-md); border: 1px solid var(--primary-200);">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: #f2f7f5; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
         <div>
-          <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Unique Hospital ID</span>
-          <div style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: var(--primary-700);" id="detail-hosp-id">HOSP-8921</div>
+          <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Unique Hospital ID</span>
+          <div style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: var(--primary-teal);" id="detail-hosp-id">HOSP-1001</div>
         </div>
-        <span class="badge-status active" id="detail-hosp-status">Active</span>
+        <span class="status-pill active" id="detail-hosp-status">Active</span>
       </div>
 
-      <!-- Detail Metric Grid -->
-      <div class="detail-grid">
-        <div class="detail-box">
-          <div class="detail-box-label">Doctor Count</div>
-          <div class="detail-box-value" id="detail-hosp-doctors">48</div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+        <div style="padding: 0.85rem; background: #f8faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted);">Doctor Count</div>
+          <div style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--text-dark);" id="detail-hosp-doctors">34</div>
         </div>
-        <div class="detail-box">
-          <div class="detail-box-label">Patient Count</div>
-          <div class="detail-box-value" id="detail-hosp-patients">1,420</div>
+        <div style="padding: 0.85rem; background: #f8faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted);">Patient Count</div>
+          <div style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--text-dark);" id="detail-hosp-patients">5,210</div>
         </div>
-        <div class="detail-box">
-          <div class="detail-box-label">Join Date</div>
-          <div class="detail-box-value" style="font-size: 0.95rem; font-family: monospace;" id="detail-hosp-joindate">2026-01-10</div>
+        <div style="padding: 0.85rem; background: #f8faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted);">Join Date</div>
+          <div style="font-size: 0.85rem; font-weight: 700; margin-top: 0.35rem;" id="detail-hosp-joindate">2026-01-10</div>
         </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
-          <span style="color: var(--slate-500); font-weight: 600;">City / Location:</span>
-          <span style="font-weight: 700;" id="detail-hosp-city">New York, NY</span>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: #f8faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span style="color: var(--text-muted);">City / Location:</span>
+          <span style="font-weight: 700;" id="detail-hosp-city">Lahore</span>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
-          <span style="color: var(--slate-500); font-weight: 600;">Assigned Administrator:</span>
-          <span style="font-weight: 700;" id="detail-hosp-admin">Dr. Sarah Jenkins</span>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span style="color: var(--text-muted);">Assigned Admin:</span>
+          <span style="font-weight: 700;" id="detail-hosp-admin">Farhan Iqbal</span>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
-          <span style="color: var(--slate-500); font-weight: 600;">Admin Login Email:</span>
-          <span style="font-weight: 700;" id="detail-hosp-email">admin@stjude.org</span>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+          <span style="color: var(--text-muted);">Admin Email:</span>
+          <span style="font-weight: 700;" id="detail-hosp-email">farhan@alshifa.org</span>
         </div>
       </div>
     </div>
 
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="closeHospitalDetailsModal()">Close Details</button>
+    <div class="modal-footer" style="justify-content: space-between;">
+      <div id="modal-detail-actions">
+        <!-- Dynamically rendered toggle suspend & portal switch buttons -->
+      </div>
+      <button class="btn-btn-outline" onclick="closeHospitalDetailsModal()">Close</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL 2: Add New Hospital (Super Admin) -->
+<!-- MODAL 2: Add New Hospital -->
 <div class="modal-overlay" id="modal-add-hospital">
-  <div class="modal-content">
+  <div class="modal-card">
     <div class="modal-header">
       <div>
-        <h3 class="card-title">🏥 Add New Hospital (Super Admin)</h3>
-        <p style="font-size: 0.8125rem; color: var(--slate-500);">Auto-generate Unique Hospital ID, setup counts & admin credentials</p>
+        <h3 class="card-title-serif" style="font-size: 1.35rem;">Add new hospital</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Provision a new medical center on MediCore OS</p>
       </div>
-      <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;" onclick="closeAddHospitalModal()">✕</button>
+      <button class="btn-btn-outline" style="padding: 0.25rem 0.6rem; border: none; font-size: 1rem;" onclick="closeAddHospitalModal()">✕</button>
     </div>
 
     <form id="form-add-hospital" onsubmit="handleCreateHospitalSubmit(event)">
       <div class="modal-body">
-        <!-- Unique ID Box -->
-        <div style="padding: 0.875rem 1rem; background: var(--primary-50); border-radius: var(--radius-md); border: 1px solid var(--primary-200); display: flex; align-items: center; justify-content: space-between;">
+        <div style="padding: 0.85rem 1rem; background: #f2f7f5; border-radius: var(--radius-md); border: 1px solid var(--card-border); display: flex; align-items: center; justify-content: space-between;">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Auto-Generated Unique Hospital ID</div>
-            <input type="text" id="input-unique-id" readonly style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: var(--primary-700); background: transparent; border: none; outline: none;" value="HOSP-8921">
+            <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Auto Unique Hospital ID</div>
+            <input type="text" id="input-unique-id" readonly style="font-family: monospace; font-size: 1.05rem; font-weight: 800; color: var(--primary-teal); background: transparent; border: none; outline: none;" value="HOSP-1008">
           </div>
-          <button type="button" class="btn btn-secondary" style="font-size: 0.75rem;" onclick="regenerateModalId()">🔄 Refresh ID</button>
+          <button type="button" class="btn-btn-outline" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;" onclick="regenerateModalId()">Refresh ID</button>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="input-hospital-name">Hospital Name</label>
-          <input type="text" id="input-hospital-name" class="form-control" placeholder="e.g. St. Luke Hospital" required>
+          <input type="text" id="input-hospital-name" class="form-control" placeholder="e.g. Shaukat Khanum Hospital" required>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
             <label class="form-label" for="input-city">City / Location</label>
-            <input type="text" id="input-city" class="form-control" placeholder="e.g. San Francisco, CA">
+            <input type="text" id="input-city" class="form-control" placeholder="e.g. Peshawar" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="input-admin-name">Admin Name</label>
-            <input type="text" id="input-admin-name" class="form-control" placeholder="e.g. Dr. Robert Vance">
+            <input type="text" id="input-admin-name" class="form-control" placeholder="e.g. Dr. Ali Raza" required>
           </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
-            <label class="form-label" for="input-doctors">Initial Doctor Count</label>
-            <input type="number" id="input-doctors" class="form-control" value="20">
+            <label class="form-label" for="input-doctors">Doctor Count</label>
+            <input type="number" id="input-doctors" class="form-control" value="25" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="input-patients">Initial Patient Count</label>
-            <input type="number" id="input-patients" class="form-control" value="180">
+            <label class="form-label" for="input-patients">Patient Count</label>
+            <input type="number" id="input-patients" class="form-control" value="1500" required>
           </div>
         </div>
 
-        <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200); display: flex; flex-direction: column; gap: 0.75rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-700); text-transform: uppercase;">🔒 Admin Login Credentials</div>
-          
-          <div class="form-group">
-            <label class="form-label" for="input-admin-email">Admin Email Login</label>
-            <input type="email" id="input-admin-email" class="form-control" placeholder="admin@hospital.org">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="input-admin-password">Initial Admin Password</label>
-            <input type="text" id="input-admin-password" class="form-control">
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="input-status-plan">Initial Status</label>
+          <select id="input-status-plan" class="form-control">
+            <option value="Active">Active</option>
+            <option value="Trial">Trial</option>
+          </select>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline" onclick="closeAddHospitalModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add Hospital & Provision Account</button>
+        <button type="button" class="btn-btn-outline" onclick="closeAddHospitalModal()">Cancel</button>
+        <button type="submit" class="btn-add-hospital">+ Add Hospital</button>
       </div>
     </form>
   </div>
