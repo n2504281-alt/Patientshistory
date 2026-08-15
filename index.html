@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediPulse HMS - Super Admin & Multi-Tenant Dashboard</title>
+  <title>MediPulse HMS - Super Admin Control Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
       <div class="brand-icon">✚</div>
       <div>
         <div class="brand-title">MediPulse</div>
-        <div style="font-size: 0.7rem; color: var(--primary-500); font-weight: 700; text-transform: uppercase;">HMS v2.4</div>
+        <div style="font-size: 0.7rem; color: var(--primary-500); font-weight: 700; text-transform: uppercase;">Super Admin Platform</div>
       </div>
     </div>
 
@@ -40,11 +40,11 @@
   <div class="main-wrapper">
     <!-- Topbar Header -->
     <header class="topbar">
-      <input type="text" id="search-hospitals" class="search-input" placeholder="Search by Hospital Name, Unique ID, or Email...">
+      <input type="text" id="search-hospitals" class="search-input" placeholder="🔍 Search hospitals by name, city, admin, or Unique ID...">
       
       <div style="display: flex; align-items: center; gap: 1rem;">
         <span style="background-color: var(--success-50); color: var(--success-600); padding: 0.35rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700;">
-          🟢 Multi-Tenant Sync Active
+          🟢 Control Center Active
         </span>
         <button class="btn btn-primary" onclick="openAddHospitalModal()">+ Add New Hospital</button>
       </div>
@@ -53,43 +53,43 @@
     <!-- Main Content Area -->
     <main class="content-viewport">
 
-      <!-- VIEW 1: SUPER ADMIN DASHBOARD -->
+      <!-- VIEW 1: SUPER ADMIN CONTROL CENTER -->
       <div id="view-super-admin">
         <div class="page-header">
-          <h1 class="page-title">Super Admin - Multi-Tenant Hospital Management</h1>
-          <p class="page-subtitle">Create new hospitals with auto-generated Unique IDs, setup admin logins, and view system metrics.</p>
+          <h1 class="page-title">Super Admin Control Center</h1>
+          <p class="page-subtitle">Platform overview, system-wide metrics, tenant hospitals registry, and status control.</p>
         </div>
 
-        <!-- KPI Metrics Grid -->
+        <!-- Top Section: 4 Stat Cards -->
         <div class="grid-4">
           <div class="stat-card">
-            <div class="stat-label">Total Registered Hospitals</div>
-            <div class="stat-value" id="metric-total-hospitals">3</div>
-            <div class="stat-trend">+2 This Month</div>
+            <div class="stat-label">Total Hospitals</div>
+            <div class="stat-value" id="stat-total-hospitals">4</div>
+            <div class="stat-trend">Platform Registered</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Active Tenant Instances</div>
-            <div class="stat-value" id="metric-active-hospitals">3</div>
-            <div class="stat-trend">100% Operational</div>
+            <div class="stat-label">Total Doctors (System-wide)</div>
+            <div class="stat-value" id="stat-total-doctors">124</div>
+            <div class="stat-trend">Attending Physicians</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Total Patient Capacity</div>
-            <div class="stat-value">1,050 Beds</div>
-            <div class="stat-trend">Multi-Tenant</div>
+            <div class="stat-label">Total Patients (System-wide)</div>
+            <div class="stat-value" id="stat-total-patients">3,260</div>
+            <div class="stat-trend">Active Health Records</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Hospital Admin Accounts</div>
-            <div class="stat-value" id="metric-admin-accounts">3</div>
-            <div class="stat-trend">Assigned Logins</div>
+            <div class="stat-label">New Hospitals This Month</div>
+            <div class="stat-value" id="stat-new-hospitals">1</div>
+            <div class="stat-trend">August 2026</div>
           </div>
         </div>
 
-        <!-- Hospitals Registry Table Card -->
+        <!-- Searchable Hospitals Table Card -->
         <div class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Registered Hospitals Registry</h2>
-              <p style="font-size: 0.8125rem; color: var(--slate-500); margin-top: 0.15rem;">Manage hospital tenants, assigned unique IDs, and credentials.</p>
+              <h2 class="card-title">Registered Hospitals Directory</h2>
+              <p style="font-size: 0.8125rem; color: var(--slate-500); margin-top: 0.15rem;">Click any hospital row to inspect detailed metrics, doctors count, and join date.</p>
             </div>
             <button class="btn btn-primary" onclick="openAddHospitalModal()">+ Add New Hospital</button>
           </div>
@@ -98,13 +98,11 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>Unique Hospital ID</th>
-                  <th>Hospital Name & Subdomain</th>
-                  <th>City / Region</th>
-                  <th>Hospital Admin Email</th>
-                  <th>Admin Password / Key</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>Hospital Name & Unique ID</th>
+                  <th>City / Location</th>
+                  <th>Admin Name & Email</th>
+                  <th>Status (Active / Suspended)</th>
+                  <th style="width: 220px;">Actions & Access</th>
                 </tr>
               </thead>
               <tbody id="hospitals-table-body">
@@ -115,7 +113,7 @@
         </div>
       </div>
 
-      <!-- VIEW 2: HOSPITAL ADMIN DASHBOARD (Logged-In View) -->
+      <!-- VIEW 2: HOSPITAL ADMIN DASHBOARD (Logged-In Portal) -->
       <div id="view-hospital-admin" style="display: none;">
         <div style="background: linear-gradient(135deg, var(--slate-900), var(--slate-800)); color: #fff; padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
           <div>
@@ -135,12 +133,12 @@
         <div class="grid-4">
           <div class="stat-card">
             <div class="stat-label">Admitted Patients</div>
-            <div class="stat-value">1,240</div>
+            <div class="stat-value">1,420</div>
             <div class="stat-trend">+8.5%</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Attending Doctors</div>
-            <div class="stat-value">84</div>
+            <div class="stat-value">48</div>
             <div class="stat-trend">On Duty</div>
           </div>
           <div class="stat-card">
@@ -157,19 +155,19 @@
 
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Hospital Admin Credentials & Security Key</h3>
+            <h3 class="card-title">Hospital Administrator Access Details</h3>
           </div>
           <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
             <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Unique Hospital ID</div>
-              <div style="font-family: monospace; font-size: 1.1rem; font-weight: 700; color: var(--primary-700); margin-top: 0.2rem;">HOSP-8921</div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Assigned Admin Name</div>
+              <div id="admin-hosp-admin" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem;">Dr. Sarah Jenkins</div>
             </div>
             <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
               <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Admin Email Login</div>
               <div id="admin-hosp-email" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem;">admin@stjude.org</div>
             </div>
             <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
-              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">System Access Password</div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Access Password</div>
               <div id="admin-hosp-password" style="font-family: monospace; font-weight: 700; font-size: 0.95rem; margin-top: 0.2rem; color: var(--warning-600);">StJudeAdmin@8921</div>
             </div>
           </div>
@@ -180,47 +178,115 @@
   </div>
 </div>
 
-<!-- Modal: Add New Hospital (Super Admin) -->
+<!-- MODAL 1: Hospital Details (Opened on Row Click) -->
+<div class="modal-overlay" id="modal-hospital-details">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h3 class="card-title" id="detail-hosp-name">St. Jude Medical Center</h3>
+        <p style="font-size: 0.8125rem; color: var(--slate-500);" id="detail-hosp-slug">stjude.medipulse.org</p>
+      </div>
+      <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;" onclick="closeHospitalDetailsModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: var(--primary-50); border-radius: var(--radius-md); border: 1px solid var(--primary-200);">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Unique Hospital ID</span>
+          <div style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: var(--primary-700);" id="detail-hosp-id">HOSP-8921</div>
+        </div>
+        <span class="badge-status active" id="detail-hosp-status">Active</span>
+      </div>
+
+      <!-- Detail Metric Grid -->
+      <div class="detail-grid">
+        <div class="detail-box">
+          <div class="detail-box-label">Doctor Count</div>
+          <div class="detail-box-value" id="detail-hosp-doctors">48</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Patient Count</div>
+          <div class="detail-box-value" id="detail-hosp-patients">1,420</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Join Date</div>
+          <div class="detail-box-value" style="font-size: 0.95rem; font-family: monospace;" id="detail-hosp-joindate">2026-01-10</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200);">
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+          <span style="color: var(--slate-500); font-weight: 600;">City / Location:</span>
+          <span style="font-weight: 700;" id="detail-hosp-city">New York, NY</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+          <span style="color: var(--slate-500); font-weight: 600;">Assigned Administrator:</span>
+          <span style="font-weight: 700;" id="detail-hosp-admin">Dr. Sarah Jenkins</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+          <span style="color: var(--slate-500); font-weight: 600;">Admin Login Email:</span>
+          <span style="font-weight: 700;" id="detail-hosp-email">admin@stjude.org</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeHospitalDetailsModal()">Close Details</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2: Add New Hospital (Super Admin) -->
 <div class="modal-overlay" id="modal-add-hospital">
   <div class="modal-content">
     <div class="modal-header">
       <div>
         <h3 class="card-title">🏥 Add New Hospital (Super Admin)</h3>
-        <p style="font-size: 0.8125rem; color: var(--slate-500);">Auto-generate Unique Hospital ID and Admin Credentials</p>
+        <p style="font-size: 0.8125rem; color: var(--slate-500);">Auto-generate Unique Hospital ID, setup counts & admin credentials</p>
       </div>
       <button class="btn btn-outline" style="padding: 0.25rem 0.5rem;" onclick="closeAddHospitalModal()">✕</button>
     </div>
 
     <form id="form-add-hospital" onsubmit="handleCreateHospitalSubmit(event)">
       <div class="modal-body">
-        <!-- Unique ID Auto-Generator Box -->
-        <div style="padding: 1rem; background: var(--primary-50); border-radius: var(--radius-md); border: 1px solid var(--primary-200); display: flex; align-items: center; justify-content: space-between;">
+        <!-- Unique ID Box -->
+        <div style="padding: 0.875rem 1rem; background: var(--primary-50); border-radius: var(--radius-md); border: 1px solid var(--primary-200); display: flex; align-items: center; justify-content: space-between;">
           <div>
             <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Auto-Generated Unique Hospital ID</div>
-            <input type="text" id="input-unique-id" readonly style="font-family: monospace; font-size: 1.15rem; font-weight: 800; color: var(--primary-700); background: transparent; border: none; outline: none;" value="HOSP-8921">
+            <input type="text" id="input-unique-id" readonly style="font-family: monospace; font-size: 1.1rem; font-weight: 800; color: var(--primary-700); background: transparent; border: none; outline: none;" value="HOSP-8921">
           </div>
-          <button type="button" class="btn btn-secondary" style="font-size: 0.75rem;" onclick="regenerateModalId()">🔄 Regenerate</button>
+          <button type="button" class="btn btn-secondary" style="font-size: 0.75rem;" onclick="regenerateModalId()">🔄 Refresh ID</button>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="input-hospital-name">Hospital Name</label>
-          <input type="text" id="input-hospital-name" class="form-control" placeholder="e.g. St. Luke International Hospital" required>
+          <input type="text" id="input-hospital-name" class="form-control" placeholder="e.g. St. Luke Hospital" required>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
-            <label class="form-label" for="input-city">City / Region</label>
+            <label class="form-label" for="input-city">City / Location</label>
             <input type="text" id="input-city" class="form-control" placeholder="e.g. San Francisco, CA">
           </div>
           <div class="form-group">
-            <label class="form-label" for="input-beds">Bed Capacity</label>
-            <input type="text" id="input-beds" class="form-control" placeholder="e.g. 300 Beds">
+            <label class="form-label" for="input-admin-name">Admin Name</label>
+            <input type="text" id="input-admin-name" class="form-control" placeholder="e.g. Dr. Robert Vance">
           </div>
         </div>
 
-        <!-- Admin Credentials -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="input-doctors">Initial Doctor Count</label>
+            <input type="number" id="input-doctors" class="form-control" value="20">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-patients">Initial Patient Count</label>
+            <input type="number" id="input-patients" class="form-control" value="180">
+          </div>
+        </div>
+
         <div style="padding: 1rem; background: var(--slate-50); border-radius: var(--radius-md); border: 1px solid var(--slate-200); display: flex; flex-direction: column; gap: 0.75rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-700); text-transform: uppercase;">🔒 Hospital Admin Login Credentials</div>
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-700); text-transform: uppercase;">🔒 Admin Login Credentials</div>
           
           <div class="form-group">
             <label class="form-label" for="input-admin-email">Admin Email Login</label>
@@ -236,7 +302,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" onclick="closeAddHospitalModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Create Hospital & Admin Account</button>
+        <button type="submit" class="btn btn-primary">Add Hospital & Provision Account</button>
       </div>
     </form>
   </div>
