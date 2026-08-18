@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $host = 'localhost';
-$db   = 'medipulse_hms';
-$user = 'root';
-$pass = '';
+$db   = 'u245697138_phs123';
+$user = 'u245697138_phs123';
+$pass = 'Naimat@.123';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -26,7 +26,12 @@ $options = [
 try {
      $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-     // Return mock success if database server is offline during initial test
-     $pdo = null;
+     // Local development fallback
+     try {
+         $localDsn = "mysql:host=localhost;dbname=medipulse_hms;charset=$charset";
+         $pdo = new PDO($localDsn, 'root', '', $options);
+     } catch (\PDOException $ex) {
+         $pdo = null;
+     }
 }
 ?>

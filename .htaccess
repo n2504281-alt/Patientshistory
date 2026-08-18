@@ -1,0 +1,21 @@
+# Hostinger Apache Server Configuration for MediPulse HMS
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+</IfModule>
+
+# Set default index file
+DirectoryIndex index.html
+
+# Security & Options
+Options -Indexes
+AddDefaultCharset UTF-8
+
+# Header Configuration
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
