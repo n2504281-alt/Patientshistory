@@ -8,12 +8,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
 <div class="app-container">
   <!-- MediCore OS Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div>
       <div class="brand-header">
         <div class="brand-icon">
@@ -28,12 +31,12 @@
       
       <ul class="nav-list">
         <li>
-          <a href="#" class="nav-item active" onclick="showDashboardView(); return false;">
+          <a href="#" id="nav-item-dashboard" class="nav-item active" onclick="showDashboardView(); return false;">
             <span>Dashboard</span>
           </a>
         </li>
         <li>
-          <a href="#" class="nav-item" onclick="filterByStatus('All'); return false;">
+          <a href="#" id="nav-item-hospitals" class="nav-item" onclick="showHospitalsView(); return false;">
             <span>Hospitals</span>
           </a>
         </li>
@@ -58,7 +61,7 @@
           </a>
         </li>
         <li>
-          <a href="#" class="nav-item" onclick="alert('System settings active'); return false;">
+          <a href="#" class="nav-item" onclick="alert('Settings active'); return false;">
             <span>Settings</span>
           </a>
         </li>
@@ -79,8 +82,17 @@
   <div class="main-wrapper">
     <!-- Topbar Header -->
     <header class="topbar">
-      <div class="search-input-wrapper">
-        <input type="text" id="search-hospitals" class="search-input" placeholder="Search hospitals, cities, admins...">
+      <div class="topbar-left">
+        <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" onclick="toggleMobileSidebar()" aria-label="Toggle navigation">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="search-input-wrapper">
+          <input type="text" id="search-hospitals" class="search-input" placeholder="Search hospitals, cities, admins...">
+        </div>
       </div>
 
       <div class="topbar-right">
@@ -91,14 +103,13 @@
     <!-- Content Viewport -->
     <main class="content-viewport">
 
-      <!-- VIEW 1: SUPER ADMIN DASHBOARD -->
+      <!-- VIEW 1: SUPER ADMIN DASHBOARD (Matches Reference Image) -->
       <div id="view-super-admin">
         <div class="page-header-row">
           <div>
             <h1 class="page-title">Platform Overview</h1>
             <p class="page-subtitle" id="formatted-date-subtitle">Saturday, August 15, 2026 — all hospitals, at a glance</p>
           </div>
-          <button class="btn-add-hospital" onclick="openAddHospitalModal()">+ Add new hospital</button>
         </div>
 
         <!-- Stat Cards Grid (4 cards) -->
@@ -125,137 +136,135 @@
           </div>
         </div>
 
-        <!-- Main Dashboard Split Grid -->
-        <div class="main-dashboard-grid">
+        <!-- Unified 2x2 Charts Grid (Fits 100vh Viewport Perfectly) -->
+        <div class="charts-4grid">
           
-          <!-- Left Column: Hospitals Table Card -->
-          <div class="dashboard-card">
+          <!-- Card 1: Hospital Growth -->
+          <div class="dashboard-card chart-card">
             <div class="dashboard-card-header">
-              <h2 class="card-title-serif">Hospitals</h2>
-              <div class="filter-tabs">
-                <button class="tab-btn active" onclick="filterByStatus('All', this)">All</button>
-                <button class="tab-btn" onclick="filterByStatus('Active', this)">Active</button>
-                <button class="tab-btn" onclick="filterByStatus('Trial', this)">Trial</button>
-                <button class="tab-btn" onclick="filterByStatus('Suspended', this)">Suspended</button>
+              <div>
+                <h3 class="card-title-serif">Hospital Growth</h3>
+                <div class="chart-subtitle">New hospitals onboarded per month</div>
               </div>
+              <span class="growth-badge">↗ 18%</span>
             </div>
-
-            <div class="table-responsive">
-              <table class="hospitals-table">
-                <thead>
-                  <tr>
-                    <th>HOSPITAL</th>
-                    <th>ADMIN</th>
-                    <th>DOCS</th>
-                    <th>PATIENTS</th>
-                    <th>STATUS</th>
-                  </tr>
-                </thead>
-                <tbody id="hospitals-table-body">
-                  <!-- Dynamically rendered by js/super-admin.js -->
-                </tbody>
-              </table>
+            <div class="chart-canvas-container">
+              <canvas id="chart-hospital-growth"></canvas>
             </div>
           </div>
 
-          <!-- Right Column: Growth Chart & Recent Activity -->
-          <div class="right-stack">
-            
-            <!-- Card 1: Hospital Growth Bar Chart -->
-            <div class="dashboard-card">
-              <div class="dashboard-card-header" style="padding-bottom: 0;">
-                <h3 class="card-title-serif" style="font-size: 1.25rem;">Hospital growth</h3>
+          <!-- Card 2: Patient Volume -->
+          <div class="dashboard-card chart-card">
+            <div class="dashboard-card-header">
+              <div>
+                <h3 class="card-title-serif">Patient Volume</h3>
+                <div class="chart-subtitle">Total registered patients, system-wide</div>
               </div>
-              <div class="chart-container">
-                <div class="chart-subtitle">New hospitals onboarded per month</div>
-                
-                <div class="bar-chart-flex">
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 40%;"></div>
-                    <span class="bar-label">Mar</span>
-                  </div>
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 30%;"></div>
-                    <span class="bar-label">Apr</span>
-                  </div>
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 60%;"></div>
-                    <span class="bar-label">May</span>
-                  </div>
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 50%;"></div>
-                    <span class="bar-label">Jun</span>
-                  </div>
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 80%;"></div>
-                    <span class="bar-label">Jul</span>
-                  </div>
-                  <div class="chart-bar-column">
-                    <div class="bar-fill" style="height: 70%;"></div>
-                    <span class="bar-label">Aug</span>
-                  </div>
-                </div>
+              <span class="growth-badge">↗ 10%</span>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="chart-patient-volume"></canvas>
+            </div>
+          </div>
 
-                <div class="chart-y-axis-labels">
-                  <span>0</span>
-                  <span>2</span>
-                  <span>4</span>
-                  <span>6</span>
-                  <span>8</span>
-                  <span>10</span>
-                </div>
+          <!-- Card 3: Plan Distribution -->
+          <div class="dashboard-card chart-card">
+            <div class="dashboard-card-header">
+              <div>
+                <h3 class="card-title-serif">Plan Distribution</h3>
+                <div class="chart-subtitle">Hospitals by subscription plan</div>
               </div>
             </div>
-
-            <!-- Card 2: Recent Activity Timeline -->
-            <div class="dashboard-card">
-              <div class="dashboard-card-header" style="padding-bottom: 0.5rem;">
-                <h3 class="card-title-serif" style="font-size: 1.25rem;">Recent activity</h3>
+            <div class="donut-chart-flex">
+              <div class="donut-canvas-container">
+                <canvas id="chart-plan-distribution"></canvas>
               </div>
-              
-              <div class="activity-feed" id="activity-feed-list">
-                <div class="activity-item">
-                  <div class="activity-dot blue"></div>
-                  <div>
-                    <div class="activity-text">Green Valley Hospital started a Trial</div>
-                    <div class="activity-time">2h ago</div>
-                  </div>
-                </div>
-                <div class="activity-item">
-                  <div class="activity-dot red"></div>
-                  <div>
-                    <div class="activity-text">Al-Noor Clinic Network was suspended</div>
-                    <div class="activity-time">6h ago</div>
-                  </div>
-                </div>
-                <div class="activity-item">
-                  <div class="activity-dot green"></div>
-                  <div>
-                    <div class="activity-text">City Care upgraded to Premium</div>
-                    <div class="activity-time">1d ago</div>
-                  </div>
-                </div>
+              <div class="chart-legend-list">
+                <div class="legend-item"><span class="legend-box premium"></span> Premium</div>
+                <div class="legend-item"><span class="legend-box basic"></span> Basic</div>
+                <div class="legend-item"><span class="legend-box trial"></span> Trial</div>
               </div>
             </div>
+          </div>
 
+          <!-- Card 4: Status Breakdown -->
+          <div class="dashboard-card chart-card">
+            <div class="dashboard-card-header">
+              <div>
+                <h3 class="card-title-serif">Status Breakdown</h3>
+                <div class="chart-subtitle">Hospitals by current account status</div>
+              </div>
+            </div>
+            <div class="donut-chart-flex">
+              <div class="donut-canvas-container">
+                <canvas id="chart-status-breakdown"></canvas>
+              </div>
+              <div class="chart-legend-list">
+                <div class="legend-item"><span class="legend-box active"></span> Active</div>
+                <div class="legend-item"><span class="legend-box trial-status"></span> Trial</div>
+                <div class="legend-item"><span class="legend-box suspended"></span> Suspended</div>
+              </div>
+            </div>
           </div>
 
         </div>
+
+      </div>
+
+      <!-- VIEW 2: HOSPITALS TABLE DIRECTORY -->
+      <div id="view-hospitals" style="display: none;">
+        <div class="page-header-row">
+          <div>
+            <h1 class="page-title">Hospitals Directory</h1>
+            <p class="page-subtitle">Manage provisioned hospitals, status, and administrative credentials</p>
+          </div>
+          <button class="btn-add-hospital" onclick="openAddHospitalModal()">+ Add new hospital</button>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="dashboard-card-header">
+            <h2 class="card-title-serif">Hospitals</h2>
+            <div class="filter-tabs">
+              <button class="tab-btn active" onclick="filterByStatus('All', this)">All</button>
+              <button class="tab-btn" onclick="filterByStatus('Active', this)">Active</button>
+              <button class="tab-btn" onclick="filterByStatus('Trial', this)">Trial</button>
+              <button class="tab-btn" onclick="filterByStatus('Suspended', this)">Suspended</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="hospitals-table">
+              <thead>
+                <tr>
+                  <th>HOSPITAL</th>
+                  <th>ADMIN</th>
+                  <th>DOCS</th>
+                  <th>PATIENTS</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="hospitals-table-body">
+                <!-- Dynamically rendered by js/super-admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       </div>
 
       <!-- VIEW 2: HOSPITAL ADMIN PORTAL SWITCH -->
       <div id="view-hospital-admin" style="display: none;">
-        <div style="background-color: var(--primary-teal); color: #fff; padding: 1.75rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+        <div class="hosp-admin-header-banner">
           <div>
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <h1 id="admin-hosp-name" style="color: #fff; font-family: var(--font-serif); font-size: 1.8rem; font-weight: 400;">St. Jude Medical Center</h1>
-              <span id="admin-hosp-id" style="background: rgba(255, 255, 255, 0.15); color: #fff; padding: 0.25rem 0.6rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-family: monospace;">HOSP-8921</span>
+            <div class="hosp-admin-title-row">
+              <h1 id="admin-hosp-name" class="hosp-admin-title">St. Jude Medical Center</h1>
+              <span id="admin-hosp-id" class="hosp-admin-badge">HOSP-8921</span>
             </div>
-            <p style="color: #a7f3d0; font-size: 0.875rem; margin-top: 0.35rem;">
+            <p class="hosp-admin-sub">
               Subdomain: <strong id="admin-hosp-slug">stjude.medipulse.org</strong> • City: <span id="admin-hosp-city">Lahore</span>
             </p>
           </div>
-          <button class="btn-btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.3);" onclick="showDashboardView()">
+          <button class="btn-btn-outline btn-back-super" onclick="showDashboardView()">
             ← Back to Super Admin
           </button>
         </div>
@@ -285,7 +294,7 @@
 
         <div class="dashboard-card" style="padding: 1.5rem;">
           <h3 class="card-title-serif" style="margin-bottom: 1rem; font-size: 1.25rem;">Administrator Credentials & Access</h3>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+          <div class="credentials-grid">
             <div style="padding: 1rem; background: #f7faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
               <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Administrator Name</div>
               <div id="admin-hosp-admin" style="font-weight: 700; font-size: 0.95rem; margin-top: 0.25rem;">Farhan Iqbal</div>
@@ -326,7 +335,7 @@
         <span class="status-pill active" id="detail-hosp-status">Active</span>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+      <div class="modal-stat-grid">
         <div style="padding: 0.85rem; background: #f8faf9; border-radius: var(--radius-md); border: 1px solid var(--card-border);">
           <div style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted);">Doctor Count</div>
           <div style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--text-dark);" id="detail-hosp-doctors">34</div>
@@ -392,7 +401,7 @@
           <input type="text" id="input-hospital-name" class="form-control" placeholder="e.g. Shaukat Khanum Hospital" required>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-row-2col">
           <div class="form-group">
             <label class="form-label" for="input-city">City / Location</label>
             <input type="text" id="input-city" class="form-control" placeholder="e.g. Peshawar" required>
@@ -403,7 +412,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-row-2col">
           <div class="form-group">
             <label class="form-label" for="input-doctors">Doctor Count</label>
             <input type="number" id="input-doctors" class="form-control" value="25" required>

@@ -377,7 +377,162 @@ function loginAsHospitalAdmin(hospitalId) {
 
 function showDashboardView() {
   document.getElementById('view-hospital-admin').style.display = 'none';
+  const hospView = document.getElementById('view-hospitals');
+  if (hospView) hospView.style.display = 'none';
   document.getElementById('view-super-admin').style.display = 'block';
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const dashNav = document.getElementById('nav-item-dashboard');
+  if (dashNav) dashNav.classList.add('active');
+
+  closeMobileSidebar();
+  initDashboardCharts();
+}
+
+function showHospitalsView() {
+  document.getElementById('view-hospital-admin').style.display = 'none';
+  document.getElementById('view-super-admin').style.display = 'none';
+  const hospView = document.getElementById('view-hospitals');
+  if (hospView) hospView.style.display = 'block';
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const hospNav = document.getElementById('nav-item-hospitals');
+  if (hospNav) hospNav.classList.add('active');
+
+  closeMobileSidebar();
+}
+
+// Chart.js Analytics & Growth Charts Controller (Exact Reference Image Match)
+let growthChartInstance = null;
+let patientVolumeChartInstance = null;
+let planDistributionChartInstance = null;
+let statusBreakdownChartInstance = null;
+
+function initDashboardCharts() {
+  if (typeof Chart === 'undefined') return;
+
+  // 1. Hospital Growth Bar Chart
+  const ctxGrowth = document.getElementById('chart-hospital-growth');
+  if (ctxGrowth) {
+    if (growthChartInstance) growthChartInstance.destroy();
+    growthChartInstance = new Chart(ctxGrowth, {
+      type: 'bar',
+      data: {
+        labels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        datasets: [{
+          data: [4, 3, 6, 5, 8, 7],
+          backgroundColor: '#0d4e46',
+          borderRadius: 4,
+          barThickness: 26
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#8e9e9a', font: { family: 'Plus Jakarta Sans', size: 12 } } },
+          y: { min: 0, max: 10, ticks: { stepSize: 2, color: '#8e9e9a', font: { family: 'Plus Jakarta Sans', size: 12 } }, grid: { color: '#f0f5f3' } }
+        }
+      }
+    });
+  }
+
+  // 2. Patient Volume Line Chart
+  const ctxVolume = document.getElementById('chart-patient-volume');
+  if (ctxVolume) {
+    if (patientVolumeChartInstance) patientVolumeChartInstance.destroy();
+    patientVolumeChartInstance = new Chart(ctxVolume, {
+      type: 'line',
+      data: {
+        labels: ['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+        datasets: [{
+          data: [6800, 8000, 9200, 10500, 12000, 13450],
+          borderColor: '#10b981',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#10b981',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 4.5,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#8e9e9a', font: { family: 'Plus Jakarta Sans', size: 12 } } },
+          y: { min: 0, max: 15000, ticks: { stepSize: 5000, color: '#8e9e9a', font: { family: 'Plus Jakarta Sans', size: 12 } }, grid: { color: '#f0f5f3' } }
+        }
+      }
+    });
+  }
+
+  // 3. Plan Distribution Donut Chart
+  const ctxPlan = document.getElementById('chart-plan-distribution');
+  if (ctxPlan) {
+    if (planDistributionChartInstance) planDistributionChartInstance.destroy();
+    planDistributionChartInstance = new Chart(ctxPlan, {
+      type: 'doughnut',
+      data: {
+        labels: ['Premium', 'Basic', 'Trial'],
+        datasets: [{
+          data: [4, 2, 1],
+          backgroundColor: ['#0d4e46', '#14b8a6', '#a7f3d0'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  // 4. Status Breakdown Donut Chart
+  const ctxStatus = document.getElementById('chart-status-breakdown');
+  if (ctxStatus) {
+    if (statusBreakdownChartInstance) statusBreakdownChartInstance.destroy();
+    statusBreakdownChartInstance = new Chart(ctxStatus, {
+      type: 'doughnut',
+      data: {
+        labels: ['Active', 'Trial', 'Suspended'],
+        datasets: [{
+          data: [5, 1, 1],
+          backgroundColor: ['#10b981', '#2563eb', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+}
+
+// Mobile Sidebar Drawer Toggle Controller
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+  }
+}
+
+function closeMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  if (sidebar && overlay) {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+  }
 }
 
 // Fetch Initial Data from PHP API Backend
@@ -401,6 +556,7 @@ async function fetchHospitalsFromAPI() {
 document.addEventListener('DOMContentLoaded', () => {
   renderStatCards();
   renderHospitalsTable();
+  initDashboardCharts();
 
   const searchInput = document.getElementById('search-hospitals');
   if (searchInput) {
@@ -409,6 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
       renderHospitalsTable();
     });
   }
+
+  // Close mobile sidebar on clicking nav items
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      closeMobileSidebar();
+    });
+  });
 
   fetchHospitalsFromAPI();
 });
