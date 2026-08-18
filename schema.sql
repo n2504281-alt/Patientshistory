@@ -1,8 +1,7 @@
 -- MediPulse Hospital Management System Database Schema
--- Multi-Tenant Hospital & Super Admin Tables
+-- Compatible with Hostinger MySQL & phpMyAdmin Import
 
--- CREATE DATABASE IF NOT EXISTS `medipulse_hms` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- USE `medipulse_hms`;
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- --------------------------------------------------------
 -- Table structure for `hospitals`
@@ -33,4 +32,7 @@ INSERT INTO `hospitals` (`hospital_id`, `name`, `slug`, `city`, `admin_name`, `a
 ('HOSP-8921', 'St. Jude Medical Center', 'stjude.medipulse.org', 'New York, NY', 'Dr. Sarah Jenkins', 'admin@stjude.org', 'StJudeAdmin@8921', 48, 1420, '2026-01-10', 'Enterprise', '450 Beds', 'Active'),
 ('HOSP-4410', 'City Care Trauma Institute', 'citycare.medipulse.org', 'Chicago, IL', 'Dr. Marcus Brody', 'admin@citycare.org', 'CityCarePass@4410', 32, 890, '2026-02-01', 'Premium', '280 Beds', 'Active'),
 ('HOSP-3109', 'Metro Pediatrics Hospital', 'metroped.medipulse.org', 'Los Angeles, CA', 'Dr. Elena Rostova', 'admin@metroped.org', 'MetroPass@3109', 26, 610, '2026-02-12', 'Enterprise', '320 Beds', 'Active'),
-('HOSP-7023', 'Apex Heart & Vascular Clinic', 'apexheart.medipulse.org', 'Houston, TX', 'Dr. Arthur Pendelton', 'admin@apexheart.org', 'ApexPass@7023', 18, 340, '2026-08-05', 'Standard', '120 Beds', 'Suspended');
+('HOSP-7023', 'Apex Heart & Vascular Clinic', 'apexheart.medipulse.org', 'Houston, TX', 'Dr. Arthur Pendelton', 'admin@apexheart.org', 'ApexPass@7023', 18, 340, '2026-08-05', 'Standard', '120 Beds', 'Suspended')
+ON DUPLICATE KEY UPDATE `name` = VALUES(`name`);
+
+SET FOREIGN_KEY_CHECKS = 1;
